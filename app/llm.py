@@ -7,10 +7,14 @@ import os
 import time
 from typing import Any
 
-from openai import OpenAI
+from openai import APIStatusError, APITimeoutError, OpenAI, RateLimitError
 
 from app.prompts import INTERPRETATION_JSON_SCHEMA, SYSTEM_PROMPT, build_user_prompt
 from app.schemas import OptimizeEnergyRequest
+
+# Keep total LLM wall time under judge 30s budget (optimizer is ~ms).
+_LLM_DEADLINE_S = 22.0
+_client_singleton: OpenAI | None = None
 
 
 class LLMInterpretationError(RuntimeError):
@@ -18,14 +22,17 @@ class LLMInterpretationError(RuntimeError):
 
 
 def _client() -> OpenAI:
+    global _client_singleton
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
         raise LLMInterpretationError("OPENAI_API_KEY is not configured")
-    return OpenAI(api_key=api_key, timeout=25.0)
+    if _client_singleton is None:
+        _client_singleton = OpenAI(api_key=api_key, timeout=20.0, max_retries=0)
+    return _client_singleton
 
 
 def interpret_operator_notes(request: OptimizeEnergyRequest) -> list[dict[str, Any]]:
-    """Call OpenAI once for all notes; retry once; optional backup model."""
+    """Call OpenAI once for all notes; retry primary once; then backup model."""
     primary = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
     backup = os.getenv("OPENAI_BACKUP_MODEL", "gpt-4o")
     user_prompt = build_user_prompt(
@@ -34,17 +41,38 @@ def interpret_operator_notes(request: OptimizeEnergyRequest) -> list[dict[str, A
         request.battery.minimum_energy_kwh,
     )
 
+    deadline = time.monotonic() + _LLM_DEADLINE_S
+    attempts: list[str] = [primary, primary]
+    if backup and backup != primary:
+        attempts.append(backup)
+
     last_error: Exception | None = None
-    for model in (primary, primary, backup):
+    for i, model in enumerate(attempts):
+        remaining = deadline - time.monotonic()
+        if remaining <= 1.0:
+            break
         try:
-            return _call_model(model, user_prompt)
+            entries = _call_model(model, user_prompt)
+            return [
+                _maybe_fix_solar_factor(e, request.operator_notes) for e in entries
+            ]
         except Exception as exc:  # noqa: BLE001 — controlled retry boundary
             last_error = exc
-            time.sleep(0.35)
+            if i < len(attempts) - 1:
+                delay = 0.4 if _is_transient(exc) else 0.2
+                time.sleep(min(delay, max(0.0, deadline - time.monotonic())))
 
     raise LLMInterpretationError(
         f"LLM interpretation failed after retries: {last_error}"
     )
+
+
+def _is_transient(exc: Exception) -> bool:
+    if isinstance(exc, (APITimeoutError, RateLimitError)):
+        return True
+    if isinstance(exc, APIStatusError) and exc.status_code >= 500:
+        return True
+    return False
 
 
 def _call_model(model: str, user_prompt: str) -> list[dict[str, Any]]:
@@ -52,7 +80,7 @@ def _call_model(model: str, user_prompt: str) -> list[dict[str, Any]]:
     response = client.chat.completions.create(
         model=model,
         temperature=0,
-        max_tokens=1200,
+        max_tokens=900,
         response_format={
             "type": "json_schema",
             "json_schema": {
@@ -81,10 +109,41 @@ def _strip_null_adjustment_fields(entry: dict[str, Any]) -> dict[str, Any]:
     adj = entry.get("structured_adjustment")
     dtype = entry.get("directive_type")
     if dtype == "no_op":
-        entry = {**entry, "applies": False, "structured_adjustment": None}
-        return entry
+        return {**entry, "applies": False, "structured_adjustment": None}
     if isinstance(adj, dict):
         cleaned = {k: v for k, v in adj.items() if v is not None}
-        # hours-only leftover with no usable fields beyond empty hours → treat carefully
         entry = {**entry, "structured_adjustment": cleaned or None}
     return entry
+
+
+def _maybe_fix_solar_factor(
+    entry: dict[str, Any], request_notes: list[str]
+) -> dict[str, Any]:
+    """Conservative fix when factor is mistakenly given as 1..100 percent."""
+    if entry.get("directive_type") != "solar_reduction":
+        return entry
+    adj = entry.get("structured_adjustment")
+    if not isinstance(adj, dict) or "factor" not in adj:
+        return entry
+    try:
+        factor = float(adj["factor"])
+    except (TypeError, ValueError):
+        return entry
+    if not (1 < factor <= 100):
+        return entry
+
+    text = f"{entry.get('explanation', '')}".lower()
+    idx = entry.get("note_index")
+    if isinstance(idx, int) and 0 <= idx < len(request_notes):
+        text = f"{request_notes[idx]} {text}".lower()
+
+    if any(
+        k in text
+        for k in ("drop to", "down to", "usable", "of forecast", "of normal", "% of")
+    ) and not any(k in text for k in ("reduction", "reduce by", "reduced by")):
+        new_factor = round(factor / 100.0, 6)
+    else:
+        # Default: "80% reduction" style → remaining fraction
+        new_factor = round(1.0 - factor / 100.0, 6)
+
+    return {**entry, "structured_adjustment": {**adj, "factor": new_factor}}

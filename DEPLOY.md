@@ -54,11 +54,11 @@ Blueprint alternative: this repo includes [`render.yaml`](render.yaml) — you c
 
 ### C. After deploy
 
-Public URL looks like: `https://gridwise-llm.onrender.com`
+**This team's live base URL:** `https://elec-bup.onrender.com`
 
 ```powershell
-curl https://YOUR-SERVICE.onrender.com/health
-python scripts/run_samples.py --base-url https://YOUR-SERVICE.onrender.com
+curl https://elec-bup.onrender.com/health
+python scripts/run_samples.py --base-url https://elec-bup.onrender.com
 ```
 
 ### D. Free-tier cold starts (important for judging)
@@ -66,8 +66,10 @@ python scripts/run_samples.py --base-url https://YOUR-SERVICE.onrender.com
 Render free **spins down** after ~15 minutes idle. First request can take 30–60s.
 
 - Judging allows `/health` readiness within **60s** of start — usually OK.
-- During the evaluation window, keep it awake with a free ping every 10 minutes:
-  - [https://cron-job.org](https://cron-job.org) → GET `https://YOUR-SERVICE.onrender.com/health` every 10 min
+- **Do this now for the evaluation window:** create a free job at [https://cron-job.org](https://cron-job.org):
+  - URL: `https://elec-bup.onrender.com/health`
+  - Schedule: every **10 minutes**
+  - Method: GET
 - Or open the health URL in a browser periodically while waiting for results.
 
 ## Fly.io (optional free backup)

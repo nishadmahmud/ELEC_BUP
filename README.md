@@ -154,12 +154,14 @@ docker run --rm -p 8000:8000 -e OPENAI_API_KEY=$OPENAI_API_KEY <REGISTRY>/<IMAGE
 
 ## Deployment notes
 
+- **Live API base URL:** `https://elec-bup.onrender.com`
 - **Primary host: Render free Web Service** (Docker). See [`DEPLOY.md`](DEPLOY.md).
 - Bind `0.0.0.0` (already in Dockerfile / uvicorn command).
 - Set `OPENAI_API_KEY` in the Render dashboard env (never bake into the image).
 - Public base URL must expose `/health` and `/optimize-energy` without login/VPN.
 - Per-request budget: complete within 30 seconds (target p95 ≤ 5s with `gpt-4o-mini`).
-- Render free spins down when idle — ping `/health` every ~10 minutes during judging (e.g. cron-job.org).
+- Render free spins down when idle — ping `https://elec-bup.onrender.com/health` every ~10 minutes during judging (e.g. cron-job.org).
+- Docker fallback commands: [`scripts/docker_publish.ps1`](scripts/docker_publish.ps1) (requires Docker Desktop).
 
 ## LLM role, guardrails, optimizer
 

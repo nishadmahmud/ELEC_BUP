@@ -2,14 +2,15 @@
 
 from __future__ import annotations
 
+import logging
 import os
+import time
 from pathlib import Path
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from pydantic import ValidationError
 
 from app.pipeline import PipelineError, run_optimize_energy
 from app.schemas import HealthResponse, OptimizeEnergyRequest, OptimizeEnergyResponse
@@ -17,11 +18,29 @@ from app.schemas import HealthResponse, OptimizeEnergyRequest, OptimizeEnergyRes
 # Load .env from project root
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+logger = logging.getLogger("gridwise")
+
 app = FastAPI(
     title="GridWise LLM Energy Optimizer",
     version="1.0.0",
     description="BUP CSE Fest 2026 — LLM-assisted campus energy optimization",
 )
+
+
+@app.middleware("http")
+async def log_request_latency(request: Request, call_next):
+    started = time.perf_counter()
+    response = await call_next(request)
+    elapsed_ms = (time.perf_counter() - started) * 1000.0
+    logger.info(
+        "%s %s -> %s (%.1f ms)",
+        request.method,
+        request.url.path,
+        response.status_code,
+        elapsed_ms,
+    )
+    return response
 
 
 @app.get("/health", response_model=HealthResponse)
