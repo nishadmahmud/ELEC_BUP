@@ -99,9 +99,9 @@ Document exact `docker pull` / `docker run` in the submission form and README.
 
 ## Submission package
 
-- [ ] Public API base URL (Render)
-- [ ] Private GitHub repo (public after deadline)
-- [ ] README local quickstart works
-- [ ] Docker image tag/digest pullable
-- [ ] 3-minute video (see VIDEO_SCRIPT.md)
-- [ ] Cron keep-alive on `/health` during judging (recommended on free Render)
+- [x] Public API base URL: `https://elec-bup.onrender.com`
+- [x] GitHub repo: https://github.com/nishadmahmud/ELEC_BUP
+- [x] README local quickstart works
+- [ ] Docker image tag/digest pullable — run [`scripts/docker_publish.ps1`](scripts/docker_publish.ps1) after installing Docker Desktop
+- [ ] 3-minute video (see [`VIDEO_SCRIPT.md`](VIDEO_SCRIPT.md))
+- [ ] Cron keep-alive on `/health` during judging — see [`KEEP_ALIVE.md`](KEEP_ALIVE.md)
