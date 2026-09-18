@@ -22,12 +22,12 @@ You do NOT invent demand, solar, tariff, or battery parameters. You do NOT inven
   You may also set hours directly as unique ascending integers 0-23.
   Examples:
   - "1 PM to 3 PM" -> start_hour=13, end_hour=15  (hours become [13,14])
+  - "between 11 AM and 2 PM" -> start_hour=11, end_hour=14  (hours become [11,12,13])
   - "noon to 2 PM" -> start_hour=12, end_hour=14  (hours become [12,13])
   - "2 AM to 5 AM" -> start_hour=2, end_hour=5    (hours become [2,3,4])
-  - "6 PM until 9 PM" -> start_hour=18, end_hour=21
+  - "6 PM until 9 PM" -> start_hour=18, end_hour=21 (hours become [18,19,20])
   - "from 7 PM until 8 PM" -> start_hour=19, end_hour=20
-- Hour mapping: midnight=0 ... noon=12 ... 11 PM=23.
-- NEVER include the end hour in the active window.
+- For "between A and B", end_hour is B on the clock (exclusive), so 11 AM–2 PM is end_hour=14 not 13.
 
 ## structured_adjustment shapes
 - solar_reduction: {"hours":[...], "factor": number}

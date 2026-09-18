@@ -30,28 +30,93 @@ def _normalize_hours(hours: Any) -> list[int]:
 
 
 def _hours_from_adjustment(adj: dict[str, Any]) -> list[int]:
-    """Prefer explicit hours; else expand half-open [start_hour, end_hour)."""
+    """Expand half-open [start_hour, end_hour) when present; else use hours list.
+
+    Prefer start/end over a raw hours array — models often off-by-one the list.
+    """
+    start = adj.get("start_hour")
+    end = adj.get("end_hour")
+    if start is not None and end is not None:
+        if isinstance(start, bool) or not isinstance(start, (int, float)):
+            raise GuardrailError(f"invalid start_hour: {start!r}")
+        if isinstance(end, bool) or not isinstance(end, (int, float)):
+            raise GuardrailError(f"invalid end_hour: {end!r}")
+        si, ei = int(start), int(end)
+        if si != start or ei != end:
+            raise GuardrailError("start_hour/end_hour must be integers")
+        if not (0 <= si <= 23) or not (0 <= ei <= 24):
+            raise GuardrailError("start_hour/end_hour out of range")
+        if ei <= si:
+            raise GuardrailError("end_hour must be greater than start_hour")
+        return list(range(si, min(ei, 24)))
+
     raw_hours = adj.get("hours")
     if isinstance(raw_hours, list) and len(raw_hours) > 0:
         return _normalize_hours(raw_hours)
 
-    start = adj.get("start_hour")
-    end = adj.get("end_hour")
-    if start is None or end is None:
-        raise GuardrailError("requires hours or start_hour+end_hour")
-    if isinstance(start, bool) or not isinstance(start, (int, float)):
-        raise GuardrailError(f"invalid start_hour: {start!r}")
-    if isinstance(end, bool) or not isinstance(end, (int, float)):
-        raise GuardrailError(f"invalid end_hour: {end!r}")
-    si, ei = int(start), int(end)
-    if si != start or ei != end:
-        raise GuardrailError("start_hour/end_hour must be integers")
-    if not (0 <= si <= 23) or not (0 <= ei <= 24):
-        raise GuardrailError("start_hour/end_hour out of range")
-    if ei <= si:
-        raise GuardrailError("end_hour must be greater than start_hour")
-    # end may be 24 meaning through hour 23
-    return list(range(si, min(ei, 24)))
+    raise GuardrailError("requires hours or start_hour+end_hour")
+
+
+def _parse_hours_from_note(note: str) -> list[int] | None:
+    """Deterministic half-open window from common note phrases (post-LLM)."""
+    import re
+
+    text = note.lower().replace("–", "-").replace("—", "-")
+    # noon / midnight helpers
+    text = re.sub(r"\bnoon\b", "12 pm", text)
+    text = re.sub(r"\bmidnight\b", "12 am", text)
+
+    def to_hour(num: str, meridiem: str | None) -> int:
+        h = int(num)
+        if meridiem is None:
+            return h  # already 24h
+        m = meridiem.lower()
+        if m == "am":
+            if h == 12:
+                return 0
+            return h
+        # pm
+        if h == 12:
+            return 12
+        return h + 12
+
+    # between 11 AM and 2 PM / from 6 PM until 9 PM / 1 PM to 3 PM / 13:00-15:00
+    patterns = [
+        r"between\s+(\d{1,2})(?::\d{2})?\s*(am|pm)?\s+and\s+(\d{1,2})(?::\d{2})?\s*(am|pm)?",
+        r"from\s+(\d{1,2})(?::\d{2})?\s*(am|pm)?\s+(?:until|to|till|-)\s+(\d{1,2})(?::\d{2})?\s*(am|pm)?",
+        r"(\d{1,2})(?::\d{2})?\s*(am|pm)?\s*(?:-|to|until|till)\s*(\d{1,2})(?::\d{2})?\s*(am|pm)?",
+        r"(\d{1,2}):00\s*[-–]\s*(\d{1,2}):00",
+    ]
+    for pat in patterns:
+        m = re.search(pat, text)
+        if not m:
+            continue
+        groups = m.groups()
+        if len(groups) == 2 and ":" in pat:
+            # 24h clock form
+            si, ei = int(groups[0]), int(groups[1])
+        else:
+            a, am1, b, am2 = groups[0], groups[1], groups[2], groups[3]
+            # If only second meridiem given, apply to both (e.g. 6-9 PM)
+            if am1 is None and am2 is not None:
+                am1 = am2
+            if am2 is None and am1 is not None:
+                am2 = am1
+            # 24h if no meridiem and hour already > 12 style left as-is
+            si = to_hour(a, am1)
+            ei = to_hour(b, am2)
+        if not (0 <= si <= 23):
+            continue
+        # half-open: end clock hour is exclusive
+        if ei == 0 and si > 0:
+            ei = 24
+        if ei <= si:
+            # e.g. 11 AM to 2 PM mis-parsed; if end looks like 2 with pm already handled
+            continue
+        if ei > 24:
+            continue
+        return list(range(si, min(ei, 24)))
+    return None
 
 
 def _as_float(value: Any, name: str) -> float:
@@ -133,7 +198,9 @@ def validate_and_normalize_interpretation(
             )
             continue
 
-        structured = _normalize_adjustment(dtype, adj, battery)
+        structured = _normalize_adjustment(
+            dtype, adj, battery, note_text=request.operator_notes[i]
+        )
         normalized.append(
             {
                 "note_index": i,
@@ -148,9 +215,17 @@ def validate_and_normalize_interpretation(
 
 
 def _normalize_adjustment(
-    dtype: str, adj: dict[str, Any], battery: BatteryConfig
+    dtype: str,
+    adj: dict[str, Any],
+    battery: BatteryConfig,
+    note_text: str = "",
 ) -> dict[str, Any]:
-    hours = _hours_from_adjustment(adj)
+    # Prefer deterministic window parsed from the note when available.
+    parsed = _parse_hours_from_note(note_text) if note_text else None
+    if parsed:
+        hours = parsed
+    else:
+        hours = _hours_from_adjustment(adj)
 
     if dtype == "solar_reduction":
         if "factor" not in adj or adj.get("factor") is None:
