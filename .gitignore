@@ -26,3 +26,7 @@ GridWise_Challenge_Summary.pdf
 
 # Competitor scrapes / local research dumps (never publish)
 _repo_scan/
+
+# Private team ops / video prep (keep locally; do not publish)
+HUMAN_OPS.md
+VIDEO_SCRIPT.md

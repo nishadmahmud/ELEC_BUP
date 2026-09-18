@@ -10,6 +10,7 @@ This service receives a 24-hour campus energy scenario plus 1–3 natural-langua
 | Health | `GET /health` → `{"status":"ok"}` |
 | Optimize | `POST /optimize-energy` |
 | Repository | https://github.com/nishadmahmud/ELEC_BUP |
+| Docker fallback | `nishadmahmud/elec_bup:v1` (Docker Hub) |
 | Model | OpenAI `gpt-4o-mini` (structured JSON) |
 | Solver | PuLP + CBC |
 
@@ -360,30 +361,36 @@ Secrets stay in environment variables or `.env`. They are never committed and ne
 
 ---
 
-## Docker (local build & run)
+## Docker fallback (pullable image)
 
-Docker Hub publishing is not required to evaluate the service. If Docker Desktop’s engine is running on your machine, build from this repository:
+Organizer fallback image on Docker Hub:
+
+| Field | Value |
+| --- | --- |
+| Image | `nishadmahmud/elec_bup:v1` |
+| Port | `8000` (binds `0.0.0.0`) |
+| Required env | `OPENAI_API_KEY` |
+| Optional env | `OPENAI_MODEL` (default `gpt-4o-mini`), `PORT` |
+| Secrets | Passed at runtime only — none baked into the image |
 
 ```bash
-docker build -t elec-bup:local .
-```
+docker pull nishadmahmud/elec_bup:v1
 
-Run (pass the API key at runtime):
-
-```bash
 # macOS / Linux
 docker run --rm -p 8000:8000 \
   -e OPENAI_API_KEY=$OPENAI_API_KEY \
   -e OPENAI_MODEL=gpt-4o-mini \
-  elec-bup:local
+  nishadmahmud/elec_bup:v1
 ```
 
 ```powershell
 # Windows PowerShell
+docker pull nishadmahmud/elec_bup:v1
+
 docker run --rm -p 8000:8000 `
   -e OPENAI_API_KEY=$env:OPENAI_API_KEY `
   -e OPENAI_MODEL=gpt-4o-mini `
-  elec-bup:local
+  nishadmahmud/elec_bup:v1
 ```
 
 Then:
@@ -393,21 +400,19 @@ curl http://127.0.0.1:8000/health
 python scripts/run_samples.py --base-url http://127.0.0.1:8000
 ```
 
-Notes:
+### Build from source (optional)
 
-- The container binds `0.0.0.0` and reads `PORT` (default 8000).
-- No credentials are stored in the image layers.
-- If Docker Desktop shows “Engine stopped” or “Virtualization support not detected,” enable virtualization / WSL2 first; the Python uvicorn path above does not need Docker.
-
-Optional Hub publish (when the engine works and you are logged in):
+If you prefer a local image instead of Hub:
 
 ```bash
-docker tag elec-bup:local nishadmahmud/elec_bup:v1
-docker login
-docker push nishadmahmud/elec_bup:v1
+docker build -t elec-bup:local .
+docker run --rm -p 8000:8000 \
+  -e OPENAI_API_KEY=$OPENAI_API_KEY \
+  -e OPENAI_MODEL=gpt-4o-mini \
+  elec-bup:local
 ```
 
-Helper script: `scripts/docker_publish.ps1`.
+Republish helper: `scripts/docker_publish.ps1`.
 
 ---
 
@@ -450,7 +455,7 @@ Helper script: `scripts/docker_publish.ps1`.
 - Judging depends on OpenAI availability and quota for the deployed key.
 - Organizer scoring scenarios are assumed feasible under ground-truth directives. Mutually impossible hard constraints are not invented away.
 - `plan_summary` is a short generated sentence and is not scored for wording.
-- Docker Hub may be unavailable from some machines if the local Docker engine cannot start; use the Render URL or local `docker build` / `uvicorn` instead.
+- If a judge machine cannot run Docker, use the live Render URL or the Python `uvicorn` quickstart above.
 
 ---
 
@@ -480,4 +485,4 @@ ELEC_BUP/
 
 ## Tie-break video
 
-Recording outline: `VIDEO_SCRIPT.md` (max 3 minutes). Demo against `https://elec-bup.onrender.com`.
+A ≤3-minute architecture/solution video is submitted separately (tie-break only). Demo against `https://elec-bup.onrender.com`.

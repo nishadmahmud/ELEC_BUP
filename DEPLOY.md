@@ -83,25 +83,30 @@ fly secrets set OPENAI_API_KEY=sk-... OPENAI_MODEL=gpt-4o-mini
 fly deploy
 ```
 
-## Docker image fallback (after Docker Desktop is installed)
+## Docker image fallback
 
-Required deliverable even with a live Render URL:
+Published image (use this on the submission form):
 
-```powershell
-docker build -t YOUR_DOCKERHUB_USER/gridwise-llm:v1 .
-docker login
-docker push YOUR_DOCKERHUB_USER/gridwise-llm:v1
-docker run --rm -p 8000:8000 -e OPENAI_API_KEY=YOUR_KEY YOUR_DOCKERHUB_USER/gridwise-llm:v1
+```text
+nishadmahmud/elec_bup:v1
+```
+
+```bash
+docker pull nishadmahmud/elec_bup:v1
+docker run --rm -p 8000:8000 \
+  -e OPENAI_API_KEY=<KEY> \
+  -e OPENAI_MODEL=gpt-4o-mini \
+  nishadmahmud/elec_bup:v1
 curl http://127.0.0.1:8000/health
 ```
 
-Document exact `docker pull` / `docker run` in the submission form and README.
+Republish after code changes: [`scripts/docker_publish.ps1`](scripts/docker_publish.ps1).
 
 ## Submission package
 
 - [x] Public API base URL: `https://elec-bup.onrender.com`
 - [x] GitHub repo: https://github.com/nishadmahmud/ELEC_BUP
 - [x] README local quickstart works
-- [ ] Docker image tag/digest pullable — run [`scripts/docker_publish.ps1`](scripts/docker_publish.ps1) after installing Docker Desktop
-- [ ] 3-minute video (see [`VIDEO_SCRIPT.md`](VIDEO_SCRIPT.md))
+- [x] Docker image pullable: `nishadmahmud/elec_bup:v1`
+- [ ] 3-minute architecture/solution video (team-local; not in this repo)
 - [ ] Cron keep-alive on `/health` during judging — see [`KEEP_ALIVE.md`](KEEP_ALIVE.md)
