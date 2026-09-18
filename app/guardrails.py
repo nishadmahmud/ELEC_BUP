@@ -87,35 +87,33 @@ def validate_and_normalize_interpretation(
             raise GuardrailError(f"unsupported directive_type: {dtype!r}")
 
         applies = entry.get("applies")
-        if not isinstance(applies, bool):
-            raise GuardrailError(f"applies must be boolean for note {i}")
-
         explanation = entry.get("explanation") or ""
         if not isinstance(explanation, str):
             explanation = str(explanation)
 
         adj = entry.get("structured_adjustment", None)
 
+        # Coerce applies from directive_type when the model mismatches.
         if dtype == "no_op":
-            if applies is not False:
-                raise GuardrailError("no_op requires applies=false")
-            if adj is not None:
-                raise GuardrailError("no_op requires structured_adjustment=null")
+            applies = False
+            adj = None
+        else:
+            applies = True
+            if not isinstance(adj, dict):
+                raise GuardrailError(f"{dtype} requires structured_adjustment object")
+
+        if dtype == "no_op":
             normalized.append(
                 {
                     "note_index": i,
                     "applies": False,
                     "directive_type": "no_op",
                     "structured_adjustment": None,
-                    "explanation": explanation or "Note does not affect today's energy schedule.",
+                    "explanation": explanation
+                    or "Note does not affect today's energy schedule.",
                 }
             )
             continue
-
-        if applies is not True:
-            raise GuardrailError(f"{dtype} requires applies=true")
-        if not isinstance(adj, dict):
-            raise GuardrailError(f"{dtype} requires structured_adjustment object")
 
         structured = _normalize_adjustment(dtype, adj, battery)
         normalized.append(
@@ -198,7 +196,8 @@ def apply_directives_to_params(
         if dtype == "solar_reduction":
             factor = adj["factor"]
             for h in hs:
-                effective_solar[h] = hours[h].solar_kwh * factor
+                # Compose multiple reductions on the same hour (defensive).
+                effective_solar[h] = effective_solar[h] * factor
         elif dtype == "minimum_battery_reserve":
             reserve = adj["minimum_energy_kwh"]
             for h in hs:

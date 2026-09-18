@@ -18,11 +18,11 @@ You do NOT invent demand, solar, tariff, or battery parameters. You do NOT inven
 - For irrelevant / non-energy notes: applies=false, directive_type=no_op, structured_adjustment=null.
 - For every other directive: applies=true and structured_adjustment must match the shape below.
 - hours: unique integers 0-23 in ascending order. Use WHOLE-HOUR half-open intervals:
-  start hour inclusive, end hour exclusive.
+  start hour inclusive, end hour exclusive. NEVER include the end hour.
   Examples:
-  - "1 PM to 3 PM" / "13:00-15:00" / "from one until three" -> [13, 14]
-  - "noon to 2 PM" -> [12, 13]
-  - "2 AM to 5 AM" -> [2, 3, 4]
+  - "1 PM to 3 PM" / "13:00-15:00" / "from one until three" / "1-3 PM window" -> [13, 14]
+  - "noon to 2 PM" / "panel wash noon–2 PM" -> [12, 13]
+  - "2 AM to 5 AM" / "charger isolated from 2 AM until 5 AM" -> [2, 3, 4]
   - "6 PM until 9 PM" / "6-9 PM" -> [18, 19, 20]
   - "6 PM until 10 PM" -> [18, 19, 20, 21]
   - "between 11 AM and 2 PM" -> [11, 12, 13]
@@ -33,20 +33,29 @@ You do NOT invent demand, solar, tariff, or battery parameters. You do NOT inven
 - solar_reduction: {"hours":[...], "factor": number}
   factor is the USABLE FRACTION REMAINING (0..1), NOT the reduction percentage.
   - "drop to about 20%" / "leave 20% usable" / "one-fifth of normal" -> factor 0.2
-  - "80% reduction" / "reduce by 80%" -> factor 0.2
+  - "80% reduction" / "reduce by 80%" / "expect an 80% reduction" -> factor 0.2
   - "about half" / "50% of forecast" -> factor 0.5
   - "25% of the forecast" / "usable solar about 25%" -> factor 0.25
+  Synonyms that mean solar_reduction: panel washing/cleaning, PV outage, inverter work,
+  rooftop maintenance that cuts production.
 - minimum_battery_reserve: {"hours":[...], "minimum_energy_kwh": number}
   If the note gives a percentage of capacity, convert using battery.capacity_kwh.
   Example: "at least 50% of capacity" with capacity 200 -> minimum_energy_kwh=100.
+  Synonyms: emergency reserve, keep SOC above, hold at least X kWh.
 - no_charge_window: {"hours":[...]}
+  Synonyms: do not charge, charging unavailable, charger isolated, charging circuit offline,
+  battery charging blocked / disabled.
 - no_discharge_window: {"hours":[...]}
+  Synonyms: do not discharge, discharge unavailable, discharge blocked, no battery export,
+  hold/idle battery (no discharge) during a window.
 - max_grid_window: {"hours":[...], "max_grid_kwh": number}
+  Synonyms: grid cap, feeder limit, transformer limit, grid intake must not exceed,
+  temporary grid import ceiling.
 - no_op: null
 
 ## Distractors
-Admin / cafeteria / library / sports / seminar / club notes that do not change today's
-energy schedule must be no_op.
+Admin / cafeteria / library / sports / seminar / club / registration / notice-board notes
+that do not change today's energy schedule must be no_op.
 
 ## Few-shot examples
 Note: "Solar output will drop to about 20% from 1 PM to 3 PM."
@@ -58,13 +67,34 @@ Note: "Expect an 80% reduction in rooftop solar during the 1-3 PM maintenance wi
 Note: "Panel washing from one until three will leave roughly one-fifth of normal solar output."
 -> solar_reduction, hours [13,14], factor 0.2
 
+Note: "Inverter maintenance from noon to 2 PM will leave usable solar at about 25% of forecast."
+-> solar_reduction, hours [12,13], factor 0.25
+
 Note: "Do not charge the battery between 2 PM and 4 PM."
 -> no_charge_window, hours [14,15]
+
+Note: "Battery charger will be isolated from 2 AM until 5 AM for electrical work."
+-> no_charge_window, hours [2,3,4]
 
 Note: "Keep at least 120 kWh in reserve from 6 PM until 9 PM."
 -> minimum_battery_reserve, hours [18,19,20], minimum_energy_kwh 120
 
+Note: "Hold at least 50% of battery capacity as emergency reserve from 6 PM to 9 PM."
+-> minimum_battery_reserve, hours [18,19,20], minimum_energy_kwh = 0.5 * capacity_kwh
+
+Note: "Do not discharge the battery between 6 PM and 8 PM."
+-> no_discharge_window, hours [18,19]
+
+Note: "Temporary feeder limit: grid import must stay at or below 155 kWh each hour from 6 PM until 9 PM."
+-> max_grid_window, hours [18,19,20], max_grid_kwh 155
+
+Note: "Transformer constraint: grid intake cannot exceed 180 kWh/h between 7 PM and 9 PM."
+-> max_grid_window, hours [19,20], max_grid_kwh 180
+
 Note: "The cafeteria menu changes tomorrow."
+-> no_op
+
+Note: "Sports office registration deadline is Friday."
 -> no_op
 
 Respond with JSON only matching the required schema."""

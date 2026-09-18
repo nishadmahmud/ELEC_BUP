@@ -33,6 +33,24 @@ def test_no_op_semantics() -> None:
     assert out[0]["structured_adjustment"] is None
 
 
+def test_coerces_applies_mismatch_for_no_op() -> None:
+    req = _base_request(["Library notice tomorrow."])
+    out = validate_and_normalize_interpretation(
+        [
+            {
+                "note_index": 0,
+                "applies": True,  # wrong; should coerce to false for no_op
+                "directive_type": "no_op",
+                "structured_adjustment": {"hours": [1]},
+                "explanation": "distractor",
+            }
+        ],
+        req,
+    )
+    assert out[0]["applies"] is False
+    assert out[0]["structured_adjustment"] is None
+
+
 def test_rejects_unknown_directive() -> None:
     req = _base_request(["Do something weird."])
     with pytest.raises(GuardrailError):

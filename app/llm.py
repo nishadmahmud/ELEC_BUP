@@ -32,9 +32,19 @@ def _client() -> OpenAI:
 
 
 def interpret_operator_notes(request: OptimizeEnergyRequest) -> list[dict[str, Any]]:
-    """Call OpenAI once for all notes; retry primary once; then backup model."""
+    """Call OpenAI once for all notes; retry the same primary model once.
+
+    Does not escalate to a slower backup by default (protects p95 latency).
+    Set OPENAI_BACKUP_MODEL only if you explicitly want a different fallback.
+    """
     primary = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
-    backup = os.getenv("OPENAI_BACKUP_MODEL", "gpt-4o")
+    # Default backup = primary (same-model retry). Empty string disables extra models.
+    backup_raw = os.getenv("OPENAI_BACKUP_MODEL")
+    if backup_raw is None:
+        backup = primary
+    else:
+        backup = backup_raw.strip() or primary
+
     user_prompt = build_user_prompt(
         request.operator_notes,
         request.battery.capacity_kwh,
@@ -43,7 +53,7 @@ def interpret_operator_notes(request: OptimizeEnergyRequest) -> list[dict[str, A
 
     deadline = time.monotonic() + _LLM_DEADLINE_S
     attempts: list[str] = [primary, primary]
-    if backup and backup != primary:
+    if backup != primary:
         attempts.append(backup)
 
     last_error: Exception | None = None
@@ -119,7 +129,7 @@ def _strip_null_adjustment_fields(entry: dict[str, Any]) -> dict[str, Any]:
 def _maybe_fix_solar_factor(
     entry: dict[str, Any], request_notes: list[str]
 ) -> dict[str, Any]:
-    """Conservative fix when factor is mistakenly given as 1..100 percent."""
+    """Fix factor when LLM returns a 1..100 percent instead of 0..1 fraction."""
     if entry.get("directive_type") != "solar_reduction":
         return entry
     adj = entry.get("structured_adjustment")
@@ -137,13 +147,37 @@ def _maybe_fix_solar_factor(
     if isinstance(idx, int) and 0 <= idx < len(request_notes):
         text = f"{request_notes[idx]} {text}".lower()
 
-    if any(
-        k in text
-        for k in ("drop to", "down to", "usable", "of forecast", "of normal", "% of")
-    ) and not any(k in text for k in ("reduction", "reduce by", "reduced by")):
+    reduction_cues = (
+        "reduction",
+        "reduce by",
+        "reduced by",
+        "drop by",
+        "cuts by",
+        "cut by",
+        "% reduction",
+    )
+    remaining_cues = (
+        "drop to",
+        "down to",
+        "leave",
+        "leaves",
+        "usable",
+        "of forecast",
+        "of normal",
+        "% of",
+        "one-fifth",
+        "one fifth",
+        "half of",
+    )
+
+    has_reduction = any(k in text for k in reduction_cues)
+    has_remaining = any(k in text for k in remaining_cues)
+
+    if has_remaining and not has_reduction:
         new_factor = round(factor / 100.0, 6)
     else:
-        # Default: "80% reduction" style → remaining fraction
+        # Prefer reduction semantics when mixed/ambiguous ("80% reduction").
         new_factor = round(1.0 - factor / 100.0, 6)
 
+    new_factor = min(1.0, max(0.0, new_factor))
     return {**entry, "structured_adjustment": {**adj, "factor": new_factor}}
