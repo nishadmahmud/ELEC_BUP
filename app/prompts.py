@@ -17,17 +17,17 @@ You do NOT invent demand, solar, tariff, or battery parameters. You do NOT inven
 - Return one entry per operator note, with note_index = 0, 1, ... in order.
 - For irrelevant / non-energy notes: applies=false, directive_type=no_op, structured_adjustment=null.
 - For every other directive: applies=true and structured_adjustment must match the shape below.
-- hours: unique integers 0-23 in ascending order. Use WHOLE-HOUR half-open intervals:
-  start hour inclusive, end hour exclusive. NEVER include the end hour.
+- Time windows are WHOLE-HOUR and half-open: start inclusive, end exclusive.
+  Preferred: set start_hour and end_hour (end exclusive). hours may be [] and will be expanded in code.
+  You may also set hours directly as unique ascending integers 0-23.
   Examples:
-  - "1 PM to 3 PM" / "13:00-15:00" / "from one until three" / "1-3 PM window" -> [13, 14]
-  - "noon to 2 PM" / "panel wash noon–2 PM" -> [12, 13]
-  - "2 AM to 5 AM" / "charger isolated from 2 AM until 5 AM" -> [2, 3, 4]
-  - "6 PM until 9 PM" / "6-9 PM" -> [18, 19, 20]
-  - "6 PM until 10 PM" -> [18, 19, 20, 21]
-  - "between 11 AM and 2 PM" -> [11, 12, 13]
-  - "from 7 PM until 8 PM" -> [19]
+  - "1 PM to 3 PM" -> start_hour=13, end_hour=15  (hours become [13,14])
+  - "noon to 2 PM" -> start_hour=12, end_hour=14  (hours become [12,13])
+  - "2 AM to 5 AM" -> start_hour=2, end_hour=5    (hours become [2,3,4])
+  - "6 PM until 9 PM" -> start_hour=18, end_hour=21
+  - "from 7 PM until 8 PM" -> start_hour=19, end_hour=20
 - Hour mapping: midnight=0 ... noon=12 ... 11 PM=23.
+- NEVER include the end hour in the active window.
 
 ## structured_adjustment shapes
 - solar_reduction: {"hours":[...], "factor": number}
@@ -59,37 +59,37 @@ that do not change today's energy schedule must be no_op.
 
 ## Few-shot examples
 Note: "Solar output will drop to about 20% from 1 PM to 3 PM."
--> solar_reduction, hours [13,14], factor 0.2
+-> solar_reduction, start_hour=13, end_hour=15, factor 0.2  (hours [13,14])
 
 Note: "Expect an 80% reduction in rooftop solar during the 1-3 PM maintenance window."
--> solar_reduction, hours [13,14], factor 0.2
+-> solar_reduction, start_hour=13, end_hour=15, factor 0.2
 
 Note: "Panel washing from one until three will leave roughly one-fifth of normal solar output."
--> solar_reduction, hours [13,14], factor 0.2
+-> solar_reduction, start_hour=13, end_hour=15, factor 0.2
 
 Note: "Inverter maintenance from noon to 2 PM will leave usable solar at about 25% of forecast."
--> solar_reduction, hours [12,13], factor 0.25
+-> solar_reduction, start_hour=12, end_hour=14, factor 0.25
 
 Note: "Do not charge the battery between 2 PM and 4 PM."
--> no_charge_window, hours [14,15]
+-> no_charge_window, start_hour=14, end_hour=16
 
 Note: "Battery charger will be isolated from 2 AM until 5 AM for electrical work."
--> no_charge_window, hours [2,3,4]
+-> no_charge_window, start_hour=2, end_hour=5
 
 Note: "Keep at least 120 kWh in reserve from 6 PM until 9 PM."
--> minimum_battery_reserve, hours [18,19,20], minimum_energy_kwh 120
+-> minimum_battery_reserve, start_hour=18, end_hour=21, minimum_energy_kwh 120
 
 Note: "Hold at least 50% of battery capacity as emergency reserve from 6 PM to 9 PM."
--> minimum_battery_reserve, hours [18,19,20], minimum_energy_kwh = 0.5 * capacity_kwh
+-> minimum_battery_reserve, start_hour=18, end_hour=21, minimum_energy_kwh = 0.5 * capacity_kwh
 
 Note: "Do not discharge the battery between 6 PM and 8 PM."
--> no_discharge_window, hours [18,19]
+-> no_discharge_window, start_hour=18, end_hour=20
 
 Note: "Temporary feeder limit: grid import must stay at or below 155 kWh each hour from 6 PM until 9 PM."
--> max_grid_window, hours [18,19,20], max_grid_kwh 155
+-> max_grid_window, start_hour=18, end_hour=21, max_grid_kwh 155
 
 Note: "Transformer constraint: grid intake cannot exceed 180 kWh/h between 7 PM and 9 PM."
--> max_grid_window, hours [19,20], max_grid_kwh 180
+-> max_grid_window, start_hour=19, end_hour=21, max_grid_kwh 180
 
 Note: "The cafeteria menu changes tomorrow."
 -> no_op
@@ -152,6 +152,12 @@ INTERPRETATION_JSON_SCHEMA: dict = {
                                         "type": "array",
                                         "items": {"type": "integer"},
                                     },
+                                    "start_hour": {
+                                        "anyOf": [{"type": "integer"}, {"type": "null"}]
+                                    },
+                                    "end_hour": {
+                                        "anyOf": [{"type": "integer"}, {"type": "null"}]
+                                    },
                                     "factor": {
                                         "anyOf": [{"type": "number"}, {"type": "null"}]
                                     },
@@ -164,6 +170,8 @@ INTERPRETATION_JSON_SCHEMA: dict = {
                                 },
                                 "required": [
                                     "hours",
+                                    "start_hour",
+                                    "end_hour",
                                     "factor",
                                     "minimum_energy_kwh",
                                     "max_grid_kwh",

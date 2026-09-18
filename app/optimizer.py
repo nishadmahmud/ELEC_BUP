@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from copy import deepcopy
 from typing import Any
 
 import pulp
@@ -18,8 +19,55 @@ class OptimizationError(RuntimeError):
 def optimize_schedule(
     request: OptimizeEnergyRequest,
     params: dict[str, Any],
-) -> list[HourlyPlanEntry]:
-    """Solve min grid cost subject to GridWise + directive constraints."""
+) -> tuple[list[HourlyPlanEntry], dict[str, Any]]:
+    """Solve min grid cost; on infeasibility, relax caps/reserves.
+
+    Returns (plan, params_used) so replay matches the solved model.
+    """
+    attempts = [
+        params,
+        _relax_max_grid(params),
+        _relax_directive_reserves(params),
+        _relax_max_grid(_relax_directive_reserves(params)),
+    ]
+    last_error: Exception | None = None
+    seen: set[str] = set()
+    for attempt in attempts:
+        key = _params_fingerprint(attempt)
+        if key in seen:
+            continue
+        seen.add(key)
+        try:
+            return _solve_once(attempt), attempt
+        except OptimizationError as exc:
+            last_error = exc
+    raise OptimizationError(str(last_error) if last_error else "optimizer failed")
+
+
+def _relax_max_grid(params: dict[str, Any]) -> dict[str, Any]:
+    out = deepcopy(params)
+    out["max_grid"] = [None] * 24
+    return out
+
+
+def _relax_directive_reserves(params: dict[str, Any]) -> dict[str, Any]:
+    out = deepcopy(params)
+    base = float(params.get("base_minimum", min(params["energy_min"])))
+    out["energy_min"] = [base] * 24
+    return out
+
+def _params_fingerprint(params: dict[str, Any]) -> str:
+    return repr(
+        (
+            params["max_grid"],
+            params["energy_min"],
+            params["max_charge"],
+            params["max_discharge"],
+        )
+    )
+
+
+def _solve_once(params: dict[str, Any]) -> list[HourlyPlanEntry]:
     demand = params["demand"]
     solar = params["effective_solar"]
     tariff = params["tariff"]
@@ -30,7 +78,6 @@ def optimize_schedule(
     capacity = params["capacity"]
     initial = params["initial_energy"]
 
-    # Upper bound for grid import (unconstrained hours)
     big_grid = max(
         max(d + mc for d, mc in zip(demand, max_charge)) + 1.0,
         1e6,
@@ -44,38 +91,30 @@ def optimize_schedule(
     d = [pulp.LpVariable(f"d_{h}", lowBound=0) for h in range(24)]
     e = [pulp.LpVariable(f"e_{h}", lowBound=0) for h in range(24)]
 
-    prob += pulp.lpSum(g[h] * tariff[h] for h in range(24))
+    # Tiny throughput penalty reduces pointless charge↔discharge cycling.
+    prob += pulp.lpSum(
+        g[h] * tariff[h] + 1e-7 * (c[h] + d[h]) for h in range(24)
+    )
 
     for h in range(24):
-        # Energy balance
         prob += g[h] + s[h] + d[h] == demand[h] + c[h], f"balance_{h}"
-        # Solar curtailment
         prob += s[h] <= solar[h], f"solar_{h}"
-        # Rate limits
         prob += c[h] <= max_charge[h], f"charge_cap_{h}"
         prob += d[h] <= max_discharge[h], f"discharge_cap_{h}"
-        # Battery bounds
         prob += e[h] >= energy_min[h], f"emin_{h}"
         prob += e[h] <= capacity, f"emax_{h}"
-        # Grid cap
         if max_grid[h] is not None:
             prob += g[h] <= max_grid[h], f"gmax_{h}"
         else:
             prob += g[h] <= big_grid, f"gsoft_{h}"
 
-        # Dynamics
         prev = initial if h == 0 else e[h - 1]
         prob += e[h] == prev + c[h] - d[h], f"dyn_{h}"
 
-    # End-of-day neutrality
     prob += e[23] == initial, "eod_neutrality"
 
-    # Discourage simultaneous charge+discharge (soft via tiny penalty not needed;
-    # CBC with continuous vars may dual-use — we net in post-processing).
-    # Add mutual exclusion with binary for cleaner plans when rates allow both.
     z = [pulp.LpVariable(f"z_{h}", cat="Binary") for h in range(24)]
     for h in range(24):
-        # If max_charge is 0, force c=0 already; same for discharge
         if max_charge[h] > EPS:
             prob += c[h] <= max_charge[h] * z[h], f"z_c_{h}"
         if max_discharge[h] > EPS:
@@ -96,7 +135,6 @@ def optimize_schedule(
         dv = float(pulp.value(d[h]) or 0.0)
         ev = float(pulp.value(e[h]) or 0.0)
 
-        # Net simultaneous charge/discharge (should be rare with binaries)
         if cv > EPS and dv > EPS:
             if cv >= dv:
                 cv, dv = cv - dv, 0.0
@@ -112,10 +150,7 @@ def optimize_schedule(
         else:
             action = "idle"
             bkwh = 0.0
-            # Recompute energy after from previous for consistency
-            # Use solver e[h] which already accounts for net
 
-        # Round lightly for JSON cleanliness while staying within 0.01 tolerance
         plan.append(
             HourlyPlanEntry(
                 hour=h,
@@ -133,5 +168,4 @@ def optimize_schedule(
 def _clean(x: float) -> float:
     if abs(x) < 1e-9:
         return 0.0
-    # Keep enough precision for 0.01 tolerance checks
     return round(x, 6)

@@ -1,0 +1,290 @@
+[
+    {
+        "name":  ".dockerignore",
+        "path":  ".dockerignore",
+        "sha":  "6c1eec2f6bf648b88a91d42ddc4abf06ea6163f8",
+        "size":  370,
+        "url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/.dockerignore?ref=main",
+        "html_url":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/.dockerignore",
+        "git_url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/6c1eec2f6bf648b88a91d42ddc4abf06ea6163f8",
+        "download_url":  "https://raw.githubusercontent.com/zihadzafarzisan/gridwiseapi/main/.dockerignore",
+        "type":  "file",
+        "_links":  {
+                       "self":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/.dockerignore?ref=main",
+                       "git":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/6c1eec2f6bf648b88a91d42ddc4abf06ea6163f8",
+                       "html":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/.dockerignore"
+                   }
+    },
+    {
+        "name":  ".env.example",
+        "path":  ".env.example",
+        "sha":  "689b6f195aed686707412b8955f73c170e8e3994",
+        "size":  259,
+        "url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/.env.example?ref=main",
+        "html_url":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/.env.example",
+        "git_url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/689b6f195aed686707412b8955f73c170e8e3994",
+        "download_url":  "https://raw.githubusercontent.com/zihadzafarzisan/gridwiseapi/main/.env.example",
+        "type":  "file",
+        "_links":  {
+                       "self":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/.env.example?ref=main",
+                       "git":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/689b6f195aed686707412b8955f73c170e8e3994",
+                       "html":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/.env.example"
+                   }
+    },
+    {
+        "name":  ".github",
+        "path":  ".github",
+        "sha":  "a203df261abe58ffe4f1a16b48e072283ce1384a",
+        "size":  0,
+        "url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/.github?ref=main",
+        "html_url":  "https://github.com/zihadzafarzisan/gridwiseapi/tree/main/.github",
+        "git_url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/trees/a203df261abe58ffe4f1a16b48e072283ce1384a",
+        "download_url":  null,
+        "type":  "dir",
+        "_links":  {
+                       "self":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/.github?ref=main",
+                       "git":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/trees/a203df261abe58ffe4f1a16b48e072283ce1384a",
+                       "html":  "https://github.com/zihadzafarzisan/gridwiseapi/tree/main/.github"
+                   }
+    },
+    {
+        "name":  ".gitignore",
+        "path":  ".gitignore",
+        "sha":  "7b2d7f3becd45d1c9a93318a52a0b09ad0fdfed7",
+        "size":  338,
+        "url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/.gitignore?ref=main",
+        "html_url":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/.gitignore",
+        "git_url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/7b2d7f3becd45d1c9a93318a52a0b09ad0fdfed7",
+        "download_url":  "https://raw.githubusercontent.com/zihadzafarzisan/gridwiseapi/main/.gitignore",
+        "type":  "file",
+        "_links":  {
+                       "self":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/.gitignore?ref=main",
+                       "git":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/7b2d7f3becd45d1c9a93318a52a0b09ad0fdfed7",
+                       "html":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/.gitignore"
+                   }
+    },
+    {
+        "name":  "BUP_CSE_FEST_2026_Preli_Public_Sample_Cases.json",
+        "path":  "BUP_CSE_FEST_2026_Preli_Public_Sample_Cases.json",
+        "sha":  "879d9505e20d0489478f80fdcb0473106a833915",
+        "size":  113006,
+        "url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/BUP_CSE_FEST_2026_Preli_Public_Sample_Cases.json?ref=main",
+        "html_url":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/BUP_CSE_FEST_2026_Preli_Public_Sample_Cases.json",
+        "git_url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/879d9505e20d0489478f80fdcb0473106a833915",
+        "download_url":  "https://raw.githubusercontent.com/zihadzafarzisan/gridwiseapi/main/BUP_CSE_FEST_2026_Preli_Public_Sample_Cases.json",
+        "type":  "file",
+        "_links":  {
+                       "self":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/BUP_CSE_FEST_2026_Preli_Public_Sample_Cases.json?ref=main",
+                       "git":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/879d9505e20d0489478f80fdcb0473106a833915",
+                       "html":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/BUP_CSE_FEST_2026_Preli_Public_Sample_Cases.json"
+                   }
+    },
+    {
+        "name":  "Dockerfile",
+        "path":  "Dockerfile",
+        "sha":  "2053cae2b2241278af78b54882c6dbc7e06c4e05",
+        "size":  1024,
+        "url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/Dockerfile?ref=main",
+        "html_url":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/Dockerfile",
+        "git_url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/2053cae2b2241278af78b54882c6dbc7e06c4e05",
+        "download_url":  "https://raw.githubusercontent.com/zihadzafarzisan/gridwiseapi/main/Dockerfile",
+        "type":  "file",
+        "_links":  {
+                       "self":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/Dockerfile?ref=main",
+                       "git":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/2053cae2b2241278af78b54882c6dbc7e06c4e05",
+                       "html":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/Dockerfile"
+                   }
+    },
+    {
+        "name":  "README.md",
+        "path":  "README.md",
+        "sha":  "498d7468675da041f27b9d9145319bf52fd13965",
+        "size":  5850,
+        "url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/README.md?ref=main",
+        "html_url":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/README.md",
+        "git_url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/498d7468675da041f27b9d9145319bf52fd13965",
+        "download_url":  "https://raw.githubusercontent.com/zihadzafarzisan/gridwiseapi/main/README.md",
+        "type":  "file",
+        "_links":  {
+                       "self":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/README.md?ref=main",
+                       "git":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/498d7468675da041f27b9d9145319bf52fd13965",
+                       "html":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/README.md"
+                   }
+    },
+    {
+        "name":  "guardrails.py",
+        "path":  "guardrails.py",
+        "sha":  "210ce8dc1c085da2aebbc8e71f35a4e734a332ba",
+        "size":  5131,
+        "url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/guardrails.py?ref=main",
+        "html_url":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/guardrails.py",
+        "git_url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/210ce8dc1c085da2aebbc8e71f35a4e734a332ba",
+        "download_url":  "https://raw.githubusercontent.com/zihadzafarzisan/gridwiseapi/main/guardrails.py",
+        "type":  "file",
+        "_links":  {
+                       "self":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/guardrails.py?ref=main",
+                       "git":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/210ce8dc1c085da2aebbc8e71f35a4e734a332ba",
+                       "html":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/guardrails.py"
+                   }
+    },
+    {
+        "name":  "llm_interpreter.py",
+        "path":  "llm_interpreter.py",
+        "sha":  "1d342e30ac3b1f739c096d6dd17034606e18a8c4",
+        "size":  13675,
+        "url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/llm_interpreter.py?ref=main",
+        "html_url":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/llm_interpreter.py",
+        "git_url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/1d342e30ac3b1f739c096d6dd17034606e18a8c4",
+        "download_url":  "https://raw.githubusercontent.com/zihadzafarzisan/gridwiseapi/main/llm_interpreter.py",
+        "type":  "file",
+        "_links":  {
+                       "self":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/llm_interpreter.py?ref=main",
+                       "git":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/1d342e30ac3b1f739c096d6dd17034606e18a8c4",
+                       "html":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/llm_interpreter.py"
+                   }
+    },
+    {
+        "name":  "main.py",
+        "path":  "main.py",
+        "sha":  "01259a4f462b3bfb5fe46f78058725a2a165abd7",
+        "size":  7427,
+        "url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/main.py?ref=main",
+        "html_url":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/main.py",
+        "git_url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/01259a4f462b3bfb5fe46f78058725a2a165abd7",
+        "download_url":  "https://raw.githubusercontent.com/zihadzafarzisan/gridwiseapi/main/main.py",
+        "type":  "file",
+        "_links":  {
+                       "self":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/main.py?ref=main",
+                       "git":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/01259a4f462b3bfb5fe46f78058725a2a165abd7",
+                       "html":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/main.py"
+                   }
+    },
+    {
+        "name":  "optimizer.py",
+        "path":  "optimizer.py",
+        "sha":  "4c680d118a2c8967092e0ea903450159333d362b",
+        "size":  8744,
+        "url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/optimizer.py?ref=main",
+        "html_url":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/optimizer.py",
+        "git_url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/4c680d118a2c8967092e0ea903450159333d362b",
+        "download_url":  "https://raw.githubusercontent.com/zihadzafarzisan/gridwiseapi/main/optimizer.py",
+        "type":  "file",
+        "_links":  {
+                       "self":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/optimizer.py?ref=main",
+                       "git":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/4c680d118a2c8967092e0ea903450159333d362b",
+                       "html":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/optimizer.py"
+                   }
+    },
+    {
+        "name":  "requirements.txt",
+        "path":  "requirements.txt",
+        "sha":  "b7c345d183952cca20aa47dd6a26abf30ffbc2b1",
+        "size":  155,
+        "url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/requirements.txt?ref=main",
+        "html_url":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/requirements.txt",
+        "git_url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/b7c345d183952cca20aa47dd6a26abf30ffbc2b1",
+        "download_url":  "https://raw.githubusercontent.com/zihadzafarzisan/gridwiseapi/main/requirements.txt",
+        "type":  "file",
+        "_links":  {
+                       "self":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/requirements.txt?ref=main",
+                       "git":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/b7c345d183952cca20aa47dd6a26abf30ffbc2b1",
+                       "html":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/requirements.txt"
+                   }
+    },
+    {
+        "name":  "schemas.py",
+        "path":  "schemas.py",
+        "sha":  "5b7c442874e93e4360d98b2be202c6132f9670a5",
+        "size":  6913,
+        "url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/schemas.py?ref=main",
+        "html_url":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/schemas.py",
+        "git_url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/5b7c442874e93e4360d98b2be202c6132f9670a5",
+        "download_url":  "https://raw.githubusercontent.com/zihadzafarzisan/gridwiseapi/main/schemas.py",
+        "type":  "file",
+        "_links":  {
+                       "self":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/schemas.py?ref=main",
+                       "git":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/5b7c442874e93e4360d98b2be202c6132f9670a5",
+                       "html":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/schemas.py"
+                   }
+    },
+    {
+        "name":  "test_api.py",
+        "path":  "test_api.py",
+        "sha":  "589cadda3263a29704a8dfe31728893b95c21f33",
+        "size":  7753,
+        "url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/test_api.py?ref=main",
+        "html_url":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/test_api.py",
+        "git_url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/589cadda3263a29704a8dfe31728893b95c21f33",
+        "download_url":  "https://raw.githubusercontent.com/zihadzafarzisan/gridwiseapi/main/test_api.py",
+        "type":  "file",
+        "_links":  {
+                       "self":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/test_api.py?ref=main",
+                       "git":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/589cadda3263a29704a8dfe31728893b95c21f33",
+                       "html":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/test_api.py"
+                   }
+    },
+    {
+        "name":  "test_gemini_live.py",
+        "path":  "test_gemini_live.py",
+        "sha":  "f1b80434ef5bf8ad437dbc5c2526cc094006e3b8",
+        "size":  1658,
+        "url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/test_gemini_live.py?ref=main",
+        "html_url":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/test_gemini_live.py",
+        "git_url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/f1b80434ef5bf8ad437dbc5c2526cc094006e3b8",
+        "download_url":  "https://raw.githubusercontent.com/zihadzafarzisan/gridwiseapi/main/test_gemini_live.py",
+        "type":  "file",
+        "_links":  {
+                       "self":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/test_gemini_live.py?ref=main",
+                       "git":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/f1b80434ef5bf8ad437dbc5c2526cc094006e3b8",
+                       "html":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/test_gemini_live.py"
+                   }
+    },
+    {
+        "name":  "test_live_submission.py",
+        "path":  "test_live_submission.py",
+        "sha":  "9a8eb0ca989c1b025c8c0c7e068b8cd7a9c87a1d",
+        "size":  10086,
+        "url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/test_live_submission.py?ref=main",
+        "html_url":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/test_live_submission.py",
+        "git_url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/9a8eb0ca989c1b025c8c0c7e068b8cd7a9c87a1d",
+        "download_url":  "https://raw.githubusercontent.com/zihadzafarzisan/gridwiseapi/main/test_live_submission.py",
+        "type":  "file",
+        "_links":  {
+                       "self":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/test_live_submission.py?ref=main",
+                       "git":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/9a8eb0ca989c1b025c8c0c7e068b8cd7a9c87a1d",
+                       "html":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/test_live_submission.py"
+                   }
+    },
+    {
+        "name":  "test_phase1.py",
+        "path":  "test_phase1.py",
+        "sha":  "1e7e56d751ebf7a7819968e0a8aaf595c201cfb3",
+        "size":  6236,
+        "url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/test_phase1.py?ref=main",
+        "html_url":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/test_phase1.py",
+        "git_url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/1e7e56d751ebf7a7819968e0a8aaf595c201cfb3",
+        "download_url":  "https://raw.githubusercontent.com/zihadzafarzisan/gridwiseapi/main/test_phase1.py",
+        "type":  "file",
+        "_links":  {
+                       "self":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/test_phase1.py?ref=main",
+                       "git":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/1e7e56d751ebf7a7819968e0a8aaf595c201cfb3",
+                       "html":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/test_phase1.py"
+                   }
+    },
+    {
+        "name":  "test_phase2.py",
+        "path":  "test_phase2.py",
+        "sha":  "a079d5417ab99d1bae1c370a0b6f83ab1ec7964d",
+        "size":  8430,
+        "url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/test_phase2.py?ref=main",
+        "html_url":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/test_phase2.py",
+        "git_url":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/a079d5417ab99d1bae1c370a0b6f83ab1ec7964d",
+        "download_url":  "https://raw.githubusercontent.com/zihadzafarzisan/gridwiseapi/main/test_phase2.py",
+        "type":  "file",
+        "_links":  {
+                       "self":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/contents/test_phase2.py?ref=main",
+                       "git":  "https://api.github.com/repos/zihadzafarzisan/gridwiseapi/git/blobs/a079d5417ab99d1bae1c370a0b6f83ab1ec7964d",
+                       "html":  "https://github.com/zihadzafarzisan/gridwiseapi/blob/main/test_phase2.py"
+                   }
+    }
+]

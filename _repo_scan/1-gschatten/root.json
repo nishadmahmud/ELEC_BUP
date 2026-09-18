@@ -1,0 +1,130 @@
+[
+    {
+        "name":  ".dockerignore",
+        "path":  ".dockerignore",
+        "sha":  "352409d672930b16cc0b881bf708fcaf1f73928b",
+        "size":  93,
+        "url":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/contents/.dockerignore?ref=main",
+        "html_url":  "https://github.com/g-schatten/BUP-Hackathon/blob/main/.dockerignore",
+        "git_url":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/git/blobs/352409d672930b16cc0b881bf708fcaf1f73928b",
+        "download_url":  "https://raw.githubusercontent.com/g-schatten/BUP-Hackathon/main/.dockerignore",
+        "type":  "file",
+        "_links":  {
+                       "self":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/contents/.dockerignore?ref=main",
+                       "git":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/git/blobs/352409d672930b16cc0b881bf708fcaf1f73928b",
+                       "html":  "https://github.com/g-schatten/BUP-Hackathon/blob/main/.dockerignore"
+                   }
+    },
+    {
+        "name":  ".gitignore",
+        "path":  ".gitignore",
+        "sha":  "d40befeef206448237490d5517c3911031fd1c1e",
+        "size":  84,
+        "url":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/contents/.gitignore?ref=main",
+        "html_url":  "https://github.com/g-schatten/BUP-Hackathon/blob/main/.gitignore",
+        "git_url":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/git/blobs/d40befeef206448237490d5517c3911031fd1c1e",
+        "download_url":  "https://raw.githubusercontent.com/g-schatten/BUP-Hackathon/main/.gitignore",
+        "type":  "file",
+        "_links":  {
+                       "self":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/contents/.gitignore?ref=main",
+                       "git":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/git/blobs/d40befeef206448237490d5517c3911031fd1c1e",
+                       "html":  "https://github.com/g-schatten/BUP-Hackathon/blob/main/.gitignore"
+                   }
+    },
+    {
+        "name":  "Dockerfile",
+        "path":  "Dockerfile",
+        "sha":  "21519461f5378fe020b84a1c9f768b9ca984fc1b",
+        "size":  729,
+        "url":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/contents/Dockerfile?ref=main",
+        "html_url":  "https://github.com/g-schatten/BUP-Hackathon/blob/main/Dockerfile",
+        "git_url":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/git/blobs/21519461f5378fe020b84a1c9f768b9ca984fc1b",
+        "download_url":  "https://raw.githubusercontent.com/g-schatten/BUP-Hackathon/main/Dockerfile",
+        "type":  "file",
+        "_links":  {
+                       "self":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/contents/Dockerfile?ref=main",
+                       "git":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/git/blobs/21519461f5378fe020b84a1c9f768b9ca984fc1b",
+                       "html":  "https://github.com/g-schatten/BUP-Hackathon/blob/main/Dockerfile"
+                   }
+    },
+    {
+        "name":  "PLAN.md",
+        "path":  "PLAN.md",
+        "sha":  "e2307e4354413ae9cdd5b3edac2c07978262817d",
+        "size":  16920,
+        "url":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/contents/PLAN.md?ref=main",
+        "html_url":  "https://github.com/g-schatten/BUP-Hackathon/blob/main/PLAN.md",
+        "git_url":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/git/blobs/e2307e4354413ae9cdd5b3edac2c07978262817d",
+        "download_url":  "https://raw.githubusercontent.com/g-schatten/BUP-Hackathon/main/PLAN.md",
+        "type":  "file",
+        "_links":  {
+                       "self":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/contents/PLAN.md?ref=main",
+                       "git":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/git/blobs/e2307e4354413ae9cdd5b3edac2c07978262817d",
+                       "html":  "https://github.com/g-schatten/BUP-Hackathon/blob/main/PLAN.md"
+                   }
+    },
+    {
+        "name":  "README.md",
+        "path":  "README.md",
+        "sha":  "429a49ffcc9152b94ddb4b88e7c5b5a7e629f9dd",
+        "size":  8531,
+        "url":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/contents/README.md?ref=main",
+        "html_url":  "https://github.com/g-schatten/BUP-Hackathon/blob/main/README.md",
+        "git_url":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/git/blobs/429a49ffcc9152b94ddb4b88e7c5b5a7e629f9dd",
+        "download_url":  "https://raw.githubusercontent.com/g-schatten/BUP-Hackathon/main/README.md",
+        "type":  "file",
+        "_links":  {
+                       "self":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/contents/README.md?ref=main",
+                       "git":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/git/blobs/429a49ffcc9152b94ddb4b88e7c5b5a7e629f9dd",
+                       "html":  "https://github.com/g-schatten/BUP-Hackathon/blob/main/README.md"
+                   }
+    },
+    {
+        "name":  "app",
+        "path":  "app",
+        "sha":  "a0c01e183041030f6abf0bfb06c01384179bc147",
+        "size":  0,
+        "url":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/contents/app?ref=main",
+        "html_url":  "https://github.com/g-schatten/BUP-Hackathon/tree/main/app",
+        "git_url":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/git/trees/a0c01e183041030f6abf0bfb06c01384179bc147",
+        "download_url":  null,
+        "type":  "dir",
+        "_links":  {
+                       "self":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/contents/app?ref=main",
+                       "git":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/git/trees/a0c01e183041030f6abf0bfb06c01384179bc147",
+                       "html":  "https://github.com/g-schatten/BUP-Hackathon/tree/main/app"
+                   }
+    },
+    {
+        "name":  "requirements.txt",
+        "path":  "requirements.txt",
+        "sha":  "23a024a80b2a0c4690275713ba075a125b39cc24",
+        "size":  99,
+        "url":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/contents/requirements.txt?ref=main",
+        "html_url":  "https://github.com/g-schatten/BUP-Hackathon/blob/main/requirements.txt",
+        "git_url":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/git/blobs/23a024a80b2a0c4690275713ba075a125b39cc24",
+        "download_url":  "https://raw.githubusercontent.com/g-schatten/BUP-Hackathon/main/requirements.txt",
+        "type":  "file",
+        "_links":  {
+                       "self":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/contents/requirements.txt?ref=main",
+                       "git":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/git/blobs/23a024a80b2a0c4690275713ba075a125b39cc24",
+                       "html":  "https://github.com/g-schatten/BUP-Hackathon/blob/main/requirements.txt"
+                   }
+    },
+    {
+        "name":  "tests",
+        "path":  "tests",
+        "sha":  "b1ee621272e94fa642568ffb91b80e6023607aa9",
+        "size":  0,
+        "url":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/contents/tests?ref=main",
+        "html_url":  "https://github.com/g-schatten/BUP-Hackathon/tree/main/tests",
+        "git_url":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/git/trees/b1ee621272e94fa642568ffb91b80e6023607aa9",
+        "download_url":  null,
+        "type":  "dir",
+        "_links":  {
+                       "self":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/contents/tests?ref=main",
+                       "git":  "https://api.github.com/repos/g-schatten/BUP-Hackathon/git/trees/b1ee621272e94fa642568ffb91b80e6023607aa9",
+                       "html":  "https://github.com/g-schatten/BUP-Hackathon/tree/main/tests"
+                   }
+    }
+]

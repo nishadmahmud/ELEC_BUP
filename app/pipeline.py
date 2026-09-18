@@ -25,8 +25,8 @@ def run_optimize_energy(request: OptimizeEnergyRequest) -> OptimizeEnergyRespons
         raw = interpret_operator_notes(request)
         interpretations = validate_and_normalize_interpretation(raw, request)
         params = apply_directives_to_params(request, interpretations)
-        plan = optimize_schedule(request, params)
-        return replay_and_aggregate(request, interpretations, params, plan)
+        plan, used_params = optimize_schedule(request, params)
+        return replay_and_aggregate(request, interpretations, used_params, plan)
     except GuardrailError as exc:
         raise PipelineError(f"interpretation_invalid: {exc}", status_code=500) from exc
     except LLMInterpretationError as exc:
@@ -44,5 +44,5 @@ def run_optimize_with_directives(
     """Test helper: skip LLM and optimize with provided interpretations."""
     normalized = validate_and_normalize_interpretation(interpretations, request)
     params = apply_directives_to_params(request, normalized)
-    plan = optimize_schedule(request, params)
-    return replay_and_aggregate(request, normalized, params, plan)
+    plan, used_params = optimize_schedule(request, params)
+    return replay_and_aggregate(request, normalized, used_params, plan)

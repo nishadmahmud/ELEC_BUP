@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import time
@@ -15,6 +16,8 @@ from app.schemas import OptimizeEnergyRequest
 # Keep total LLM wall time under judge 30s budget (optimizer is ~ms).
 _LLM_DEADLINE_S = 22.0
 _client_singleton: OpenAI | None = None
+_INTERP_CACHE: dict[str, list[dict[str, Any]]] = {}
+_CACHE_MAX = 256
 
 
 class LLMInterpretationError(RuntimeError):
@@ -31,14 +34,29 @@ def _client() -> OpenAI:
     return _client_singleton
 
 
+def _cache_key(request: OptimizeEnergyRequest) -> str:
+    payload = {
+        "notes": request.operator_notes,
+        "capacity": request.battery.capacity_kwh,
+        "min_energy": request.battery.minimum_energy_kwh,
+        "model": os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
+    }
+    raw = json.dumps(payload, sort_keys=True, ensure_ascii=False)
+    return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+
+
 def interpret_operator_notes(request: OptimizeEnergyRequest) -> list[dict[str, Any]]:
     """Call OpenAI once for all notes; retry the same primary model once.
 
     Does not escalate to a slower backup by default (protects p95 latency).
     Set OPENAI_BACKUP_MODEL only if you explicitly want a different fallback.
     """
+    key = _cache_key(request)
+    cached = _INTERP_CACHE.get(key)
+    if cached is not None:
+        return [dict(e) for e in cached]
+
     primary = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
-    # Default backup = primary (same-model retry). Empty string disables extra models.
     backup_raw = os.getenv("OPENAI_BACKUP_MODEL")
     if backup_raw is None:
         backup = primary
@@ -63,9 +81,13 @@ def interpret_operator_notes(request: OptimizeEnergyRequest) -> list[dict[str, A
             break
         try:
             entries = _call_model(model, user_prompt)
-            return [
+            result = [
                 _maybe_fix_solar_factor(e, request.operator_notes) for e in entries
             ]
+            if len(_INTERP_CACHE) >= _CACHE_MAX:
+                _INTERP_CACHE.pop(next(iter(_INTERP_CACHE)))
+            _INTERP_CACHE[key] = result
+            return [dict(e) for e in result]
         except Exception as exc:  # noqa: BLE001 — controlled retry boundary
             last_error = exc
             if i < len(attempts) - 1:
@@ -176,7 +198,6 @@ def _maybe_fix_solar_factor(
     if has_remaining and not has_reduction:
         new_factor = round(factor / 100.0, 6)
     else:
-        # Prefer reduction semantics when mixed/ambiguous ("80% reduction").
         new_factor = round(1.0 - factor / 100.0, 6)
 
     new_factor = min(1.0, max(0.0, new_factor))

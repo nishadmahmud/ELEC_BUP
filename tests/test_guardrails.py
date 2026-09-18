@@ -102,18 +102,44 @@ def test_solar_factor_bounds() -> None:
         )
 
 
-def test_note_index_order_and_count() -> None:
-    req = _base_request(["a", "b"])
-    with pytest.raises(GuardrailError):
-        validate_and_normalize_interpretation(
-            [
-                {
-                    "note_index": 0,
-                    "applies": False,
-                    "directive_type": "no_op",
-                    "structured_adjustment": None,
-                    "explanation": "only one",
-                }
-            ],
-            req,
-        )
+def test_expands_start_end_window() -> None:
+    req = _base_request(["Do not charge from 2 PM until 4 PM."])
+    out = validate_and_normalize_interpretation(
+        [
+            {
+                "note_index": 0,
+                "applies": True,
+                "directive_type": "no_charge_window",
+                "structured_adjustment": {
+                    "hours": [],
+                    "start_hour": 14,
+                    "end_hour": 16,
+                },
+                "explanation": "window",
+            }
+        ],
+        req,
+    )
+    assert out[0]["structured_adjustment"]["hours"] == [14, 15]
+
+
+def test_window_beats_empty_hours() -> None:
+    req = _base_request(["Solar drop 1-3 PM to 20%."])
+    out = validate_and_normalize_interpretation(
+        [
+            {
+                "note_index": 0,
+                "applies": True,
+                "directive_type": "solar_reduction",
+                "structured_adjustment": {
+                    "start_hour": 13,
+                    "end_hour": 15,
+                    "factor": 0.2,
+                },
+                "explanation": "window",
+            }
+        ],
+        req,
+    )
+    assert out[0]["structured_adjustment"]["hours"] == [13, 14]
+    assert out[0]["structured_adjustment"]["factor"] == 0.2

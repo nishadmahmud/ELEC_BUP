@@ -26,14 +26,32 @@ def _normalize_hours(hours: Any) -> list[int]:
         if hi < 0 or hi > 23:
             raise GuardrailError(f"hour out of range: {hi}")
         cleaned.append(hi)
-    unique_sorted = sorted(set(cleaned))
-    if len(unique_sorted) != len(cleaned):
-        # Deduplicate but keep ascending unique — duplicates are invalid per spec
-        raise GuardrailError("hours must contain unique integers")
-    if unique_sorted != cleaned and cleaned != sorted(cleaned):
-        # Allow unsorted input by normalizing to ascending unique
-        pass
-    return unique_sorted
+    return sorted(set(cleaned))
+
+
+def _hours_from_adjustment(adj: dict[str, Any]) -> list[int]:
+    """Prefer explicit hours; else expand half-open [start_hour, end_hour)."""
+    raw_hours = adj.get("hours")
+    if isinstance(raw_hours, list) and len(raw_hours) > 0:
+        return _normalize_hours(raw_hours)
+
+    start = adj.get("start_hour")
+    end = adj.get("end_hour")
+    if start is None or end is None:
+        raise GuardrailError("requires hours or start_hour+end_hour")
+    if isinstance(start, bool) or not isinstance(start, (int, float)):
+        raise GuardrailError(f"invalid start_hour: {start!r}")
+    if isinstance(end, bool) or not isinstance(end, (int, float)):
+        raise GuardrailError(f"invalid end_hour: {end!r}")
+    si, ei = int(start), int(end)
+    if si != start or ei != end:
+        raise GuardrailError("start_hour/end_hour must be integers")
+    if not (0 <= si <= 23) or not (0 <= ei <= 24):
+        raise GuardrailError("start_hour/end_hour out of range")
+    if ei <= si:
+        raise GuardrailError("end_hour must be greater than start_hour")
+    # end may be 24 meaning through hour 23
+    return list(range(si, min(ei, 24)))
 
 
 def _as_float(value: Any, name: str) -> float:
@@ -132,12 +150,10 @@ def validate_and_normalize_interpretation(
 def _normalize_adjustment(
     dtype: str, adj: dict[str, Any], battery: BatteryConfig
 ) -> dict[str, Any]:
-    if "hours" not in adj:
-        raise GuardrailError(f"{dtype} requires hours")
-    hours = _normalize_hours(adj["hours"])
+    hours = _hours_from_adjustment(adj)
 
     if dtype == "solar_reduction":
-        if "factor" not in adj:
+        if "factor" not in adj or adj.get("factor") is None:
             raise GuardrailError("solar_reduction requires factor")
         factor = _as_float(adj["factor"], "factor")
         if factor < 0 or factor > 1:
@@ -145,24 +161,21 @@ def _normalize_adjustment(
         return {"hours": hours, "factor": factor}
 
     if dtype == "minimum_battery_reserve":
-        if "minimum_energy_kwh" not in adj:
+        if "minimum_energy_kwh" not in adj or adj.get("minimum_energy_kwh") is None:
             raise GuardrailError("minimum_battery_reserve requires minimum_energy_kwh")
         reserve = _as_float(adj["minimum_energy_kwh"], "minimum_energy_kwh")
         if reserve < 0:
             raise GuardrailError("minimum_energy_kwh must be non-negative")
         if reserve > battery.capacity_kwh + TOLERANCE:
             raise GuardrailError("minimum_energy_kwh exceeds battery capacity")
-        # Clamp tiny float overshoot into capacity
         reserve = min(reserve, battery.capacity_kwh)
         return {"hours": hours, "minimum_energy_kwh": reserve}
 
     if dtype in ("no_charge_window", "no_discharge_window"):
-        extra = set(adj.keys()) - {"hours"}
-        # Ignore unknown keys but require hours only shape
         return {"hours": hours}
 
     if dtype == "max_grid_window":
-        if "max_grid_kwh" not in adj:
+        if "max_grid_kwh" not in adj or adj.get("max_grid_kwh") is None:
             raise GuardrailError("max_grid_window requires max_grid_kwh")
         cap = _as_float(adj["max_grid_kwh"], "max_grid_kwh")
         if cap < 0:
@@ -226,4 +239,5 @@ def apply_directives_to_params(
         "tariff": [h.tariff_bdt_per_kwh for h in hours],
         "capacity": battery.capacity_kwh,
         "initial_energy": battery.initial_energy_kwh,
+        "base_minimum": battery.minimum_energy_kwh,
     }
